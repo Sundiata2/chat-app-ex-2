@@ -1,3 +1,5 @@
+//TODO: updateRooms function in index.html
+
 //Our list of people on chat
 var people = {};
 
@@ -51,6 +53,10 @@ module.exports = function startServer(io) {
       io.sockets.in(socket.room).emit('update', socket.name + ' has left the server');
       socket.room = newroom;
 
+      io.sockets.in(socket.room).emit('update', socket.name + ' has entered the room');
+
+      //TODO: updateRooms function in index.html
+      socket.emit('updateRooms', rooms, newroom);
     });
 
     socket.on('disconnect', () => {
