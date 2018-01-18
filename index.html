@@ -33,6 +33,7 @@
 
         //Sets client name
         $("#name").keypress(function(e){
+          //If they've hit enter in the name field, emits 'join' to websocket server
           if(e.which == 13) {
             var name = $("#name").val();
             if (name != "") {
