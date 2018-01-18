@@ -24,6 +24,7 @@ module.exports = function startServer(io) {
         socket.emit('updateRooms', rooms, 'room1');
       });
 
+      //Tells everyone they have joined
       io.emit('update', name + ' has joined the server');
       io.emit('update-people', people);
     });
@@ -36,6 +37,21 @@ module.exports = function startServer(io) {
     // socket.on('send', msg => {
     //   io.emit('chat', people[socket.id], msg);
     // });
+
+    //Switch room function
+    socket.on('switchRoom', newroom => {
+      //Leave the current room (stored in session)
+      socket.leave(socket.room);
+
+      //Join the new room
+      socket.join(newroom);
+      socket.emit('update', 'you have conneced to' + newroom);
+
+      //Send message to old room letting them know user has left
+      io.sockets.in(socket.room).emit('update', socket.name + ' has left the server');
+      socket.room = newroom;
+
+    });
 
     socket.on('disconnect', () => {
       io.emit('update', people[socket.id] + ' has left the server');
