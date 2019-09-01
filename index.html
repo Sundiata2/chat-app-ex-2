@@ -12,11 +12,14 @@
       $(() => {
         var socket = io()
 
+        //Initial setup when client joins server
         $("#chat").hide();
         $("#name").focus();
         $("form").submit(function(event){
             event.preventDefault();
         });
+
+        //Join function connected to button click
         $("#join").click(function(){
           var name = $("#name").val();
           if (name != "") {
@@ -27,7 +30,10 @@
             ready = true;
           }
         });
+
+        //Sets client name
         $("#name").keypress(function(e){
+          //If they've hit enter in the name field, emits 'join' to websocket server
           if(e.which == 13) {
             var name = $("#name").val();
             if (name != "") {
@@ -39,10 +45,14 @@
             }
           }
         });
+
+        //Updates messages
         socket.on("update", function(msg) {
           if(ready)
             $("#msgs").append("<li>" + msg + "</li>");
-        })
+        });
+
+        //Updates people
         socket.on("update-people", function(people){
           if(ready) {
             $("#people").empty();
@@ -51,21 +61,29 @@
             });
           }
         });
+
+        //Appends messages from user
         socket.on("chat", function(who, msg){
           if(ready) {
             $("#msgs").append("<li><strong><span class='text-success'>" + who + "</span></strong> says: " + msg + "</li>");
           }
         });
+
+        //Client handle disconnections
         socket.on("disconnect", function(){
           $("#msgs").append("<li><strong><span class='text-warning'>The server is not available</span></strong></li>");
           $("#msg").attr("disabled", "disabled");
           $("#send").attr("disabled", "disabled");
         });
+
+        //Sends message
         $("#send").click(function(){
           var msg = $("#msg").val();
           socket.emit("send", msg);
           $("#msg").val("");
         });
+
+        //Handles message keypress
         $("#msg").keypress(function(e){
           if(e.which == 13) {
             var msg = $("#msg").val();
@@ -76,6 +94,7 @@
       });
     </script>
   </head>
+
   <body>
     <div class="row">
       <div class="span2">
